@@ -1,12 +1,15 @@
-package Antepahnie-;
+package src;
 
-//Token Types
-
+/**
+ * Token Types
+ */
 enum TokenType {
-    //Single-character tokens
-    MINUS, PLUS, DIV, MULT
-    //Literals
+	// Single-character tokens.
+	LEFT_PAREN, RIGHT_PAREN, DOT, MINUS, PLUS, DIV, MULT,
 
-    //EOF
+	// Literals.
+	INT, DOUBLE, IDENTIFIER,
 
+	// EOF
+	EOF
 }
