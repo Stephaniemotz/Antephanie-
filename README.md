@@ -1,14 +1,9 @@
-Welcome to Antephanie!
+Welcome to Antephanie₂!
 
-This is a repository for PA2 in CS441. Antephanie is a programming language 
-used as a lexical analyzer for Java. 
+This is a repository for PA2 in CS441. Antephanie is a programming language used as a lexical analyzer for Java. 
 
-Users will...
-# Antephanie-
-Repository for PA2 
+Users will input an equation that will return the equation described in Antephanie language. The language includes the periodic table
+elements that are closely matched with the equation. 
 
-Read me file:
--introduces your project (C interpreter)
--the language you are designing 
--tools you are using for your lexer 
+The tools we are using the our lexer is the periodic table, Visual Studio Code, JFlex, and ChatGPT.
 
