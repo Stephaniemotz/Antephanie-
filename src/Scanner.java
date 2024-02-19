@@ -6,15 +6,9 @@ import java.util.List;
 
 import static src.TokenType.*; // [static-import]
 
-
-/*
- * Task 2 - the Scanner class
- */
-
-
 public class Scanner {
 
-	private final String source; 	// the Jay source code
+	private final String source; 	// the Antephanie source code
 	private final List<Token> tokens = new ArrayList<>();	// the list of tokens
 
 	// current scan location
@@ -23,7 +17,7 @@ public class Scanner {
 
 	/**
 	 * Scanner Constructor
-	 * @param source - the Jay source code
+	 * @param source - the Antephanie source code
 	 * */
 	public Scanner(String source) {
 		this.source = source;
@@ -36,8 +30,6 @@ public class Scanner {
 		if (isAtEnd())
 			return '\0';
 		
-		// Task 2.1
-		// update next line to return current character
 		return source.charAt(current);
 	}
 	
@@ -50,14 +42,13 @@ public class Scanner {
 	 * @return next Character or '\0'. This method does NOT update the position of the character 
 	 * */
 	private char nextChar() {
-		// Task 2.2
-		// update this method to return next Character or '\0'
 		
 		if (isAtEnd())
 			return '\0';
 		
 		return source.charAt(current++);
 	}
+	
 	
 	
 	/** 
@@ -80,9 +71,6 @@ public class Scanner {
 	 * 
 	 */
 	private char next() {
-		//Task 2.4
-		// update this method
-		//return current character, and then increase position by 1
 		char currentChar = currentChar();
 		
 		if (!isAtEnd()) {
@@ -109,8 +97,6 @@ public class Scanner {
 	 * @param value - token value
 	 */
 	private void addToken(TokenType type, Object value) {
-		// Task 2.5
-		// Add a Token to the tokens list
 		tokens.add(new Token(type, value));	
 		
 	}
@@ -121,9 +107,6 @@ public class Scanner {
 	 * @return a list of tokens
 	 * */
 	List<Token> scanTokens() {
-		// Task 2.6
-		// invoke the scanToken method to
-		// scan all the tokens
 		while (!isAtEnd()) {
 			start = current;
 			scanToken();
@@ -140,45 +123,185 @@ public class Scanner {
 	 * Use the addToken() method to 
 	 * add a token to the tokens list
 	 */
-	private void scanToken() {
-		char c = next();
-		// Task 2.7
-		// update the switch for adding a token
-		switch (c) {
-		
-		case '(':
-			addToken(LEFT_PAREN);
-			break;
-		case ')':
-			addToken(RIGHT_PAREN);
-			break;
-		case '-':
-			addToken(MINUS);
-			break;
-		case '+':
-			addToken(PLUS);
-			break;
-		case '*':
-			addToken(MULT);
-			break;
-		case '/':
-			addToken(DIV);
-			break;
-		case ' ':
-		case '\r':
-		case '\t':
-			break; // Ignore ' ', '\r', and '\t'
-		default:
-			// digit-start
-			if (isDigit(c)) {
-				number();
-			} else {
-				// char-error
-				Jay.error("Unexpected character.");
-			}
 
-			break;
+	 private void scanToken() {
+		char c = next();
+
+		switch (c) {
+			//Delimeters
+			case '(':
+				addToken(LPAREN);
+				break;
+			case ')':
+				addToken(RPAREN);
+				break;
+			case '{':
+				addToken(LBRACE);
+				break;
+			case '}':
+				addToken(RBRACE);
+				break;
+			case ',':
+				addToken(COMMA);
+				break;
+			case ';':
+				addToken(SEMI);
+				break;
+			case ':':
+				addToken(COLON);
+				break;
+			case '.':
+				addToken(PERIOD); //Periodic???
+				break;
+
+			//COMMENTS
+			case 'H':
+				if (match('2') && match('0')) {
+					addToken(COMMENTS);
+				} else {
+					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+				}
+
+			//HANDLE ALL THE RIGHT BRACKETS
+			case '-':
+				if (match('-') && match('>')) {
+                	addToken(RBRACKET); //should handle --> as right bracket
+            	} else {
+                	// Handle as an unknown token or report an error
+                	Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+            	}
+            	break;
+
+			//HANDLE ALL THE LEFT BRACKETS
+			case '<':
+				if (match('-') && match('-')) {
+					addToken(LBRACKET); //should handle <-- as left bracket 
+				} else {
+					// Handle as an unknown token or report an error
+					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+				}
+				break;
+				
+			//Time to handle all the square brackets (yay)
+			case '[':
+				SquareBracketContent();
+				break;
+			
+			case ' ': //Empty 
+			case '\r':
+			case '\t':
+				break; // Ignore ' ', '\r', and '\t'
+			default:
+				// digit-start
+				if (isDigit(c)) {
+					number();
+				} else {
+					// Handle as an unknown token or report an error
+					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+				}
+				break;
 		}
+	}
+
+	//match and peek methods used for brackets 
+	private char peek() {
+		if (current < source.length()) {
+			return source.charAt(current);
+		}
+		return '\0';
+	}
+	private boolean match(char expected) {
+		if (peek() == expected) {
+			current++;
+			return true;
+		}
+		return false;
+	}
+	
+	private void SquareBracketContent() {
+		// Save the starting position of the content inside '['
+		int startBracketContent = current;
+	
+		// Consume characters until a ']' is encountered
+		while (!isAtEnd() && currentChar() != ']') {
+			next();
+		}
+	
+		// Check if ']' was found
+		if (isAtEnd()) {
+			Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+			return;
+		}
+	
+		// Get the content inside '[' and ']'
+		String content = source.substring(startBracketContent, current);
+	
+		// Process the content and add the appropriate token
+		processSquareBracket(content);
+	}
+	
+	private void processSquareBracket(String content) {
+		// Example: Check for specific content inside '[' and ']'
+
+		//Operators
+		if (content.equals("P")) {
+			addToken(PLUS);
+		} else if (content.equals("S")) {
+			addToken(MINUS);
+		} else if (content.equals("Ts")) {
+			addToken(MULT);
+		} else if (content.equals("Dy")) {
+			addToken(DIV);
+		} else if (content.equals("Mo")) {
+			addToken(MOD);
+		} else if (content.equals("O")) {
+			addToken(OR);
+		} else if (content.equals("Am")) {
+			addToken(AND);
+		} else if (content.equals("No")) {
+			addToken(NOT);
+		} else if (content.equals("Lr")) {
+			addToken(LOR);
+		} else if (content.equals("Al")) {
+			addToken(LAND);
+		} else if (content.equals("Lu")) {
+			addToken(LNOT);
+		} else if (content.equals("La")) {
+			addToken(LESSTHAN);
+		} else if (content.equals("Ga")) {
+			addToken(GREATERTHAN);
+		} else if (content.equals("Li")) {
+			addToken(LESSEQ);
+		} else if (content.equals("Ge")) {
+			addToken(GREATEQ);
+		} else if (content.equals("Eu")) {
+			addToken(EQUAL);
+		} else if (content.equals("Ne")) {
+			addToken(NOTEQUAL);
+
+		//Assigment Operators
+		} else if (content.equals("Te")) {
+			addToken(TIMESEQUAL);
+		} else if (content.equals("Ds")) {
+			addToken(DIVEQUAL);
+		} else if (content.equals("Pa")) {
+			addToken(PLUSEQUAL);
+		} else if (content.equals("Mn")) {
+			addToken(MINUSEQUAL);
+
+		//Increment/Decrement 
+		} else if (content.equals("In")) {
+			addToken(INCREMENT);
+		} else if (content.equals("Md")) {
+			addToken(DECREMENT);
+
+		}else {
+			// Handle as an unknown token or report an error
+			Antephanie.error("Unexpected Chemical Reaction: " + content);
+		}
+	
+		// Consume the ']'
+		next();
 	}
 
 	/**

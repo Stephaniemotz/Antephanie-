@@ -6,24 +6,21 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 
-/* ------------------------------------  
- * Note: This file is completed.
- * ---------------------------------- */
-public class Jay {
+public class Antephanie {
 
 	// had-error
 	static boolean hadError = false;
 
 	
 	/**
-	 * RUN Jay Script using Prompt
+	 * RUN Antephanie Script using Prompt
 	 */
 	public static void main(String[] args) throws IOException {
 		InputStreamReader input = new InputStreamReader(System.in);
 		BufferedReader reader = new BufferedReader(input);
 
 		for (;;) {
-			System.out.print("jay > ");
+			System.out.print("Antephanie > ");
 			String line = reader.readLine();
 			if (line == null)
 				break;

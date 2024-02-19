@@ -4,11 +4,24 @@ package src;
  * Token Types
  */
 enum TokenType {
-	// Single-character tokens.
-	LEFT_PAREN, RIGHT_PAREN, DOT, MINUS, PLUS, DIV, MULT,
+
+	//Delimeters
+	LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, PERIOD, SEMI, COLON, ELLIPSIS,
+
+	// Operators.
+	DOT, MINUS, PLUS, DIV, MULT, MOD, OR, AND, NOT, XOR, LOR, LAND, LNOT, LESSTHAN, GREATERTHAN, LESSEQ, GREATEQ, EQUAL, NOTEQUAL, 
+
+	//Assignment Operators
+	TIMESEQUAL, DIVEQUAL, MODEQUAL, PLUSEQUAL, MINUSEQUAL, 
+
+	//Increment/Decrement
+	INCREMENT, DECREMENT,
 
 	// Literals.
 	INT, DOUBLE, IDENTIFIER,
+
+	//Comments.
+	COMMENTS,
 
 	// EOF
 	EOF
