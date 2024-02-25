@@ -20,11 +20,15 @@ package src;
 	/**        
 	 * @return the string representation of a token
 	 */
-	public String toString(int position) {
-        if (value != null) {
-            return type + ":" + value.toString() + " at position " + position;
-        } else {
-            return type.toString() + " at position " + position;
-        }
-    }
+	public String toString() {
+		// task 1.2
+		// update token_str to 
+		// the string representation of the token
+		if (value != null) {
+			return type + ":" + value.toString();
+		} else {
+			return type.toString();
+		}
+
+	}
 }
