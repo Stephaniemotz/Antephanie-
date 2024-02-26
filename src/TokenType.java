@@ -25,8 +25,8 @@ enum TokenType {
 	INT, DOUBLE, IDENTIFIER,
 
 	//Comments.
-	COMMENTS,
-	//H20
+	STARTCOMMENT, ENDCOMMENT,
+	//#H20, H20#
 
 	// EOF
 	EOF

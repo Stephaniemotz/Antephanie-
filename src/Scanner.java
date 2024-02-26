@@ -150,17 +150,39 @@ public class Scanner {
 			case ':':
 				addToken(COLON);
 				break;
-			case '.':
-				addToken(PERIOD); //Periodic???
-				break;
+			//case '.':
+				//addToken(PERIOD); //Periodic???
+				//.break;
 
-			//COMMENTS
+			//Period
+			case 'P':
+				if (match('e') && match('r') && match('i') && match('o') && match('d') && match('i') && match('c') ) {
+                	addToken(PERIOD); 
+            	} else {
+                	// Handle as an unknown token or report an error
+                	Antephanie.error("Unexpected Token. Try Again.");
+            	}
+            	break;
+
+			//Start COMMENTS
+			case '#':
+				if (match('H') && match('2') && match('0') ) {
+                	addToken(STARTCOMMENT); 
+            	} else {
+                	// Handle as an unknown token or report an error
+                	Antephanie.error("Unexpected Token. Try Again.");
+            	}
+            	break;
+
+			//End COMMENTS
 			case 'H':
-				if (match('2') && match('0')) {
-					addToken(COMMENTS);
-				} else {
-					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
-				}
+				if (match('2') && match('0') && match('#') ) {
+                	addToken(ENDCOMMENT); 
+            	} else {
+                	// Handle as an unknown token or report an error
+                	Antephanie.error("Unexpected Token. Try Again.");
+            	}
+            	break;
 
 			//HANDLE ALL THE RIGHT BRACKETS
 			case '-':
@@ -168,7 +190,7 @@ public class Scanner {
                 	addToken(RBRACKET); //should handle --> as right bracket
             	} else {
                 	// Handle as an unknown token or report an error
-                	Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+                	Antephanie.error("Unexpected Token. Try Again.");
             	}
             	break;
 
@@ -178,7 +200,7 @@ public class Scanner {
 					addToken(LBRACKET); //should handle <-- as left bracket 
 				} else {
 					// Handle as an unknown token or report an error
-					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+					Antephanie.error("Unexpected Token. Try Again.-");
 				}
 				break;
 				
@@ -327,13 +349,14 @@ public class Scanner {
 		    }
 
 		    // Create a NUMBER token
-		    String lexeme = source.substring(start, current);
-		    if (hasDot) {
-		        addToken(DOUBLE, Double.parseDouble(lexeme));
-		    } else {
-		        addToken(INT, Integer.parseInt(lexeme));
-		    }
+    		String lexeme = source.substring(start, current);
+    			try {
+       				addToken(DOUBLE, Double.parseDouble(lexeme));
+    			} catch (NumberFormatException e) {
+        			// Handle the error for invalid number format
+        			Antephanie.error("Invalid number format: " + lexeme);
+    		}
 		}
+	}
 		
 	
-}

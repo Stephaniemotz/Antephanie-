@@ -15,6 +15,7 @@ public class Antephanie {
 	/**
 	 * RUN Antephanie Script using Prompt
 	 */
+	
 	public static void main(String[] args) throws IOException {
 		InputStreamReader input = new InputStreamReader(System.in);
 		BufferedReader reader = new BufferedReader(input);
