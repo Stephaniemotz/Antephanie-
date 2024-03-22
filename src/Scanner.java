@@ -1,6 +1,5 @@
 package src;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,115 +13,25 @@ public class Scanner {
 	// current scan location
 	private int start = 0;		// staring position of current token
 	private int current = 0;	// position of current character
+	private int line = 1;
 
-	/**
-	 * Scanner Constructor
-	 * @param source - the Antephanie source code
-	 * */
 	public Scanner(String source) {
 		this.source = source;
 	}
 	
-	/**
-	 * @return current character or '\0'
-	 * */
-	private char currentChar() {
-		if (isAtEnd())
-			return '\0';
-		
-		return source.charAt(current);
-	}
-	
-	
-	private boolean isAtEnd() {
-		return current >= source.length();
-	}
-	
-	/**
-	 * @return next Character or '\0'. This method does NOT update the position of the character 
-	 * */
-	private char nextChar() {
-		
-		if (isAtEnd())
-			return '\0';
-		
-		return source.charAt(current++);
-	}
-	
-	
-	
-	/** 
-	 * Check if a Character is a Digit
-	 * @param c - a character
-	 * @return true if c is a digit, false otherwise
-	 **/
-	private boolean isDigit(char c) {
-		if (c >= '0' && c <= '9') {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
-	
-	/**
-	 * Advance to next Character. This method updates the position of the character 
-	 * @return current character, Increase the index of current character
-	 * 
-	 */
-	private char next() {
-		char currentChar = currentChar();
-		
-		if (!isAtEnd()) {
-			current++;
-		}
-		return currentChar;
-	}
-
-	
-	/**
-	 * Add a Token to the tokens list
-	 * 
-	 * @param type - token type note that token value is null
-	 */
-	private void addToken(TokenType type) {
-		addToken(type, null);
-	}
-
-	
-	/**
-	 * Add a Token to the tokens list
-	 * 
-	 * @param type  - token type
-	 * @param value - token value
-	 */
-	private void addToken(TokenType type, Object value) {
-		tokens.add(new Token(type, value));	
-		
-	}
-
-
-	/**
-	 * Generate a list of tokens
-	 * @return a list of tokens
-	 * */
 	List<Token> scanTokens() {
 		while (!isAtEnd()) {
+
 			start = current;
 			scanToken();
 		}
-		
 
 		// End of the script - add an EOF token
 		addToken(EOF);
 		return tokens;
 	}
 
-	/**
-	 * Scan a Token.
-	 * Use the addToken() method to 
-	 * add a token to the tokens list
-	 */
 
 	 private void scanToken() {
 		char c = next();
@@ -150,9 +59,6 @@ public class Scanner {
 			case ':':
 				addToken(COLON);
 				break;
-			//case '.':
-				//addToken(PERIOD); //Periodic???
-				//.break;
 
 			//Period
 			case 'P':
@@ -160,7 +66,7 @@ public class Scanner {
                 	addToken(PERIOD); 
             	} else {
                 	// Handle as an unknown token or report an error
-                	Antephanie.error("Unexpected Token. Try Again.");
+                	Antephanie.error(line, "Unexpected token, try again.");
             	}
             	break;
 
@@ -170,7 +76,7 @@ public class Scanner {
                 	addToken(STARTCOMMENT); 
             	} else {
                 	// Handle as an unknown token or report an error
-                	Antephanie.error("Unexpected Token. Try Again.");
+                	Antephanie.error(line, "Unexpected token, try again.");
             	}
             	break;
 
@@ -180,17 +86,17 @@ public class Scanner {
                 	addToken(ENDCOMMENT); 
             	} else {
                 	// Handle as an unknown token or report an error
-                	Antephanie.error("Unexpected Token. Try Again.");
+                	Antephanie.error(line, "Unexpected token, try again.");
             	}
             	break;
 
 			//HANDLE ALL THE RIGHT BRACKETS
-			case '-':
+			/* case '-':
 				if (match('-') && match('>')) {
                 	addToken(RBRACKET); //should handle --> as right bracket
             	} else {
                 	// Handle as an unknown token or report an error
-                	Antephanie.error("Unexpected Token. Try Again.");
+                	Antephanie.error(line, "Unexpected token, try again.");
             	}
             	break;
 
@@ -200,9 +106,10 @@ public class Scanner {
 					addToken(LBRACKET); //should handle <-- as left bracket 
 				} else {
 					// Handle as an unknown token or report an error
-					Antephanie.error("Unexpected Token. Try Again.-");
+					Antephanie.error(line, "Unexpected token, try again.");
 				}
 				break;
+			*/
 				
 			//Time to handle all the square brackets (yay)
 			case '[':
@@ -219,7 +126,7 @@ public class Scanner {
 					number();
 				} else {
 					// Handle as an unknown token or report an error
-					Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+					Antephanie.error(line, "Unexpected Chemical Reaction, try again.");
 				}
 				break;
 		}
@@ -251,7 +158,7 @@ public class Scanner {
 	
 		// Check if ']' was found
 		if (isAtEnd()) {
-			Antephanie.error("Unexpected Chemical Reaction. Try Again.");
+			Antephanie.error(line, "Unexpected Chemical Reaction, try again.");
 			return;
 		}
 	
@@ -319,44 +226,89 @@ public class Scanner {
 
 		}else {
 			// Handle as an unknown token or report an error
-			Antephanie.error("Unexpected Chemical Reaction: " + content);
+			Antephanie.error(line, "Unexpected Chemical Reaction.");
 		}
 	
 		// Consume the ']'
 		next();
 	}
 
-	/**
-	 * Scan a Number Token
-	 */
+/**
+ * Scan a Number Token
+ */
 		private void number() {
-		    boolean hasDot = false;
+			while (isDigit(currentChar())) {
+				next();
+			}
+				
+			// Look for a fractional part.
+			if (currentChar() == '.' && isDigit(nextChar())) {
+				// Consume the "."
+				next();
+	
+				while (isDigit(currentChar()))
+					next();
+			}
+			
+			// Create a DOUBLE token
+			String lexeme = source.substring(start, current);
+			try {
+				addToken(DOUBLE, Double.parseDouble(lexeme));
+			} catch (NumberFormatException e) {
+				// Handle the error for invalid number format
+				//Antephanie.error("Invalid number format: " + lexeme);
+				Antephanie.error(line, "Invalid number format!");
+			
+		}
 
-		    while (isDigit(currentChar())) {
-		        next();
-		    }
+	}
 
-		    // Look for a fractional part.
-		    if (currentChar() == '.') {
-		        // Consume the dot
-		        hasDot = true;
-		        next();
+	private char currentChar() {
+		if (isAtEnd())
+			return '\0';
+		
+		return source.charAt(current);
+	}
+	
+	private boolean isAtEnd() {
+		return current >= source.length();
+	}
+	
+	private char nextChar() {
+		
+		if (isAtEnd())
+			return '\0';
+		
+		return source.charAt(current++);
+	}
 
-		        // Consume the digits after the dot
-		        while (isDigit(currentChar())) {
-		            next();
-		        }
-		    }
-
-		    // Create a NUMBER token
-    		String lexeme = source.substring(start, current);
-    			try {
-       				addToken(DOUBLE, Double.parseDouble(lexeme));
-    			} catch (NumberFormatException e) {
-        			// Handle the error for invalid number format
-        			Antephanie.error("Invalid number format: " + lexeme);
-    		}
+	private boolean isDigit(char c) {
+		if (c >= '0' && c <= '9') {
+			return true;
+		} else {
+			return false;
 		}
 	}
+
+	private char next() {
+		char currentChar = currentChar();
+		
+		if (!isAtEnd()) {
+			current++;
+		}
+		return currentChar;
+	}
+
+	private void addToken(TokenType type) {
+		addToken(type, null);
+	}
+
+
+	private void addToken(TokenType type, Object value) {
+		String text = source.substring(start, current);
+		tokens.add(new Token(type, value, text, line));
+	}
+
+}
 		
 	

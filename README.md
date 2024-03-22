@@ -1,4 +1,4 @@
-Welcome to Antephanie₂!
+Hello chemists, and welcome to Antephanie₂!
 
 This is a repository for PA2 in CS441. Antephanie is a programming language used as a lexical analyzer for Java. 
 
@@ -7,5 +7,12 @@ elements that are closely matched with the equation.
 
 The tools we are using for our lexer is the periodic table, Visual Studio Code, JFlex, and ChatGPT.
 
+//If-else (reactant --> product)
+//Switch, case (Experiment, reaction)
+//Break (spill)
 
+Looping
+//For (yields)
+//While (balance)
+//Do-while (lab, report)
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-
+/*------------------ Note: This file is completed ----------------*/
 public class Antephanie {
 
 	// had-error
@@ -13,9 +13,8 @@ public class Antephanie {
 
 	
 	/**
-	 * RUN Antephanie Script using Prompt
+	 * RUN Jay Script using Prompt
 	 */
-	
 	public static void main(String[] args) throws IOException {
 		InputStreamReader input = new InputStreamReader(System.in);
 		BufferedReader reader = new BufferedReader(input);
@@ -31,38 +30,46 @@ public class Antephanie {
 	}
 
 	/**
-	 * use the Lexer/Scanner and 
-	 * print the tokens
+	 * use the Lexer and Parser, then
+	 * print the generated AST
 	 */
 	private static void run(String source) {
 		Scanner scanner = new Scanner(source);
 		List<Token> tokens = scanner.scanTokens();
-
-		if(!hadError) {
-			// For now, just print the tokens.
-			int i = 0;
-			System.out.print("[");
-			for (Token token : tokens) {
-				System.out.print(token);
-				if(++i < tokens.size()) System.out.print("; ");
-			}
-			System.out.println("]");
-		}
 		
-		hadError = false;
+		Parser parser = new Parser(tokens);
+		Expr expression = parser.parse();
+
+		// Stop if there was a syntax error.
+	    if (hadError) return;
+
+	    System.out.println(new AstPrinter().print(expression));
+		
+		
 	}
 
 	/**
 	 * Handle the Error
 	 */
-	static void error(String message) {
-		report(message);
+	static void error(int line, String message) {
+		report(line, "", message);
 	}
 
-	private static void report(String message) {
-		System.err.println("Error: " + message);
-		System.out.print("");
+	private static void report(int line, String where, String message) {
+		System.err.println(
+		        "[line " + line + "] Error" + where + ": " + message);
 		hadError = true;
 	}
+	
+	
+	//> Parsing Expressions token-error
+	  static void error(Token token, String message) {
+	    if (token.type == TokenType.EOF) {
+	      report(token.line, " at end", message);
+	    } else {
+	      report(token.line, " at '" + token.lexeme + "'", message);
+	    }
+	  }
+	//< Parsing Expressions token-error
 
 }

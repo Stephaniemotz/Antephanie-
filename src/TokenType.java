@@ -7,7 +7,7 @@ enum TokenType {
 
 	//Delimeters
 	LPAREN, RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, PERIOD, SEMI, COLON, 
-	// (, ), {, }, -->, <--, ',' , . , ; , : 
+	// (, ), {, }, -->, <--, ',' , Periodic , ; , : 
 
 	// Operators.
 	DOT, MINUS, PLUS, DIV, MULT, MOD, OR, AND, NOT, XOR, LOR, LAND, LNOT, LESSTHAN, GREATERTHAN, LESSEQ, GREATEQ, EQUAL, NOTEQUAL, 
