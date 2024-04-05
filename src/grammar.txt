@@ -1,0 +1,8 @@
+assignment	   → <variable> "=" <factor> 
+variable       → <identifier>
+term           → factor ( ( "-" | "+" ) factor )* ;
+factor         → unary ( ( "/" | "*" ) unary )* ;
+unary          → ( "-" ) unary | primary ;
+primary        → NUMBER | IDENTIFIER | "(" term ")" ;
+
+

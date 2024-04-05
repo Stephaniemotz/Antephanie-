@@ -7,12 +7,3 @@ elements that are closely matched with the equation.
 
 The tools we are using for our lexer is the periodic table, Visual Studio Code, JFlex, and ChatGPT.
 
-//If-else (reactant --> product)
-//Switch, case (Experiment, reaction)
-//Break (spill)
-
-Looping
-//For (yields)
-//While (balance)
-//Do-while (lab, report)
-
