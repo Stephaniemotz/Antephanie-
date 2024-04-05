@@ -1,6 +1,9 @@
 package src;
 
 //import java.util.List;
+//import src.Expr.Assign;
+//import src.Expr.Variable;
+//import src.Expr.Visitor;
 
 
 abstract class Expr {
@@ -21,6 +24,12 @@ abstract class Expr {
 		R visitLiteralExpr(Literal expr);
 
 		R visitUnaryExpr(Unary expr);
+		
+		R visitLogicalExpr(Logical expr); // New method for visiting logical expressions
+		
+		R visitAssignExpr(Assign expr);
+		
+		R visitVariableExpr(Variable expr);
 	}
 
 	// An abstract method must be implemented by subclasses.
@@ -41,6 +50,38 @@ abstract class Expr {
 	 * passing this as an argument. 
 	 * * * * * * * * * * *
 	 */
+	
+	 public static class Assign extends Expr {
+        public final Token name;
+        public final TokenType operator;
+        public final Expr value;
+
+        public Assign(Token name, TokenType operator, Expr value) {
+            this.name = name;
+            this.operator = operator;
+            this.value = value;
+        }
+
+		@Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitAssignExpr(this);
+        }
+    }
+	
+	static class Variable extends Expr {
+	    Variable(Token name) {
+	      this.name = name;
+	    }
+
+	    @Override
+	    <R> R accept(Visitor<R> visitor) {
+	      return visitor.visitVariableExpr(this);
+	    }
+
+	    final Token name;
+	  }
+	
+	
 
 	/* Literal subclass */
 	static class Literal extends Expr {
@@ -74,11 +115,15 @@ abstract class Expr {
 		final Token operator;
 		final Expr right;
 	}
+	
+	
 
 	
 	/* Unary Operation subclass */
 	static class Unary extends Expr {
-	
+		// TODO: Task 2 - complete the Unary class, which represents 
+		// a unary operation (e.g., negation) on a single expression.
+		
 
 		@Override
 		<R> R accept(Visitor<R> visitor) {
@@ -107,5 +152,24 @@ abstract class Expr {
 
 		final Expr expression;
 	}
+	
+	// Logical subclass for OR, AND, NOT
+	static class Logical extends Expr {
+        final Expr left;
+        final Token operator;
+        final Expr right;
 
+        Logical(Expr left, Token operator, Expr right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpr(this);
+            
+      
+        }
+	}
 }

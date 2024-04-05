@@ -4,8 +4,11 @@ package src;
 //import java.util.Arrays;
 import java.util.List;
 
+import src.Expr.Literal;
+//import src.Expr.Assign;
+
 import static src.TokenType.*;
-//import static Jay.Expr.*;
+//import static src.Expr.*;
 
 class Parser {
 	private final List<Token> tokens;
@@ -15,28 +18,85 @@ class Parser {
 		//Task 3.1 - Takes a List<Token> as an argument and 
 		//initializes the tokens field with it.
 		
-		this.tokens = tokens;  //Check this? I'm not sure
+		this.tokens = tokens;  
 		this.current = 0;
 
 	}
-
+	
 	/*
 	 * * The entry point for parsing
 	 */
 	Expr parse() {
-		// Task 3.12 - starts the parsing process and
-		// returns the resulting AST.
-		Expr res = this.term();
-		return res;
-		
+		if (peek().type == VAR) {
+			return assignment();
+		}
+		return term();
+	 }
+	
+	
+	/* private Expr assignment() {
 
+		
+		consume(VAR, "Expect keyword Independent.");
+		
+		// Lab 5
+		// TODO Task 3.1 – update the assignment() method, which 
+		// can create an Expr.Assign Node (for variable declaration).
+		Token name = consume(ID, "Expected indentifier after 'VAR'.");
+		
+		consume(EQUAL, "Expected '=' after the variable name.");
+
+
+		Expr value = factor();
+	    System.out.println("(" + name + " : " + ((Literal) value).value + ")");
+	    return value;
+		
+	    
+	} */
+
+	private Expr assignment() {
+		consume(VAR, "Expect keyword Independent.");
+		Token name = consume(ID, "Expected identifier after 'VAR'.");
+		TokenType operatorType = matchOperators(); 
+		Expr value = factor();
+		System.out.println("(" + operatorType + " " + ((Literal) value).value + ")");
+		//return new Expr.Assign(name, operatorType, value);
+		return value;
 	}
+	
+	//Assignment Operators
+	private TokenType matchOperators() {
+		if (check(EQUAL)) {
+			consume(EQUAL, "Expected '=' after the variable name.");
+			return EQUAL;
+		} else if (check(TIMESEQUAL)) {
+			consume(TIMESEQUAL, "Expected '[Ts=]' after the variable name.");
+			return TIMESEQUAL;
+		} else if (check(DIVEQUAL)) {
+			consume(DIVEQUAL, "Expected '[Dy=]' after the variable name.");
+			return DIVEQUAL;
+		} else if (check(PLUSEQUAL)) {
+			consume(PLUSEQUAL, "Expected '[P=]' after the variable name.");
+			return PLUSEQUAL;
+		} else if (check(MINUSEQUAL)) {
+			consume(MINUSEQUAL, "Expected '[-=]' after the variable name.");
+			return MINUSEQUAL;
+		} // Add more operators here as needed
+		else {
+			// Handle unexpected operator
+			throw error(peek(), "Unexpected operator in assignment.");
+		}
+	}
+	
+	
+
+	
 
 	// Rule: term → factor ( ( "+" | "-" ) factor )*
 	private Expr term() {
 		Expr left = factor();
 
-		while (match(MINUS, PLUS)) {
+		while (match(MINUS, PLUS, GREATERTHAN, LESSTHAN, GREATEQ, LESSEQ, NOTEQUAL, EQUALTO, NOT, AND, OR)) {
 			Token operator = peek();
 			advance();
 			Expr right = factor();
@@ -57,7 +117,7 @@ class Parser {
 		// Task 3.8 - follow the grammar rule for a factor and
 		// return a Binary Operation AST nodes
 		
-		while (match(DIV, MULT)) {
+		while (match(DIV, MULT, MOD)) {
 			Token operator = peek();
 			advance();
 			Expr right = unary();
@@ -90,21 +150,22 @@ class Parser {
 	// Rule: primary → NUMBER | "(" expression ")" ;
 	private Expr primary() {
 
-		if (match(DOUBLE)) {
+		if (match(NUMBER)) {
 			
+			// TODO: Task 3.10 - return a Literal AST nodes
 			advance();
 			return new Expr.Literal(previous().value);
 			
 
 		}
-
-		if (match(LPAREN)) {
+	
+		if (match(LEFT_PAREN)) {
 			// Task 3.11 - follow the rule:
 			// primary → "(" expression ")"
 			// and return a Grouping AST nodes
 			advance();
 			Expr node = term();
-			consume(RPAREN, "Expect ')' after expression.");
+			consume(RIGHT_PAREN, "Expect ')' after expression.");
 			
 			return new Expr.Grouping(node);
 			
@@ -115,6 +176,7 @@ class Parser {
 
 	}
 	
+
 
 	/************** Utility Methods *****************/
 
@@ -155,12 +217,15 @@ class Parser {
 	}
 
 	// check if current token is EOF
-	private boolean isAtEnd() {
+	/* private boolean isAtEnd() {
 		// Task 3.4 - check if current token is EOF
 		if (this.tokens.get(current).value == EOF) 
 			return true;
 		return false;
 
+	}*/
+	private boolean isAtEnd() {
+	    return current >= tokens.size() || peek().type == EOF;
 	}
 
 	// get current token

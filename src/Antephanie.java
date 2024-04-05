@@ -20,7 +20,7 @@ public class Antephanie {
 		BufferedReader reader = new BufferedReader(input);
 
 		for (;;) {
-			System.out.print("Antephanie > ");
+			System.out.print("Antephanie Parser --> ");
 			String line = reader.readLine();
 			if (line == null)
 				break;
@@ -55,21 +55,22 @@ public class Antephanie {
 		report(line, "", message);
 	}
 
-	private static void report(int line, String where, String message) {
-		System.err.println(
-		        "[line " + line + "] Error" + where + ": " + message);
-		hadError = true;
-	}
 	
 	
 	//> Parsing Expressions token-error
-	  static void error(Token token, String message) {
+	static void error(Token token, String message) {
 	    if (token.type == TokenType.EOF) {
-	      report(token.line, " at end", message);
+	        report(token.line, " at end", message);
 	    } else {
-	      report(token.line, " at '" + token.lexeme + "'", message);
+	        report(token.line, " at '" + token.lexeme + "'", message);
 	    }
-	  }
+	}
+
+	private static void report(int line, String where, String message) {
+	    System.err.println(
+	            "[line " + line + "] Error" + where + ": " + message);
+	    hadError = true;
+	}
 	//< Parsing Expressions token-error
 
 }
