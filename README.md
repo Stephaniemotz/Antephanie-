@@ -11,28 +11,31 @@ To use Antephanie, simply input an equation and the lexer will return the equati
 
 Lexer Example:
 
-      Input:5 [P] 4
-      Output: 9
+      Input:
+            5 [P] 4
+      Output: 
+            9
 
 Parser Example: 
 
-      Input: experiments (groups) {​
-                 reaction 1:​
-                   element = "metals";​
-                   spill;​
-                 reaction 2:​
-                    element = "nonmetals"; ​
-                    spill;​
-                 reaction 3:​
-                    element = "noble gases";​
-                    spill;​
-              }  
+      Input:
+             independent weight = 1.0078
+             reactants (weight <= 1.0078) { 
+                  formula("hydrogen");​
+               }   ​
+                  products {​
+                  formula("not hydrogen");​
+                  }
+      Output: 
+            hydrogen
 
 Interpreter Example:
 
-      Input:  VAR element = 14 (Silicon)
-              REACTANT element > 1 [Am] element < 20 PRODUCT element-6
-      Output: 14 (Silicon)
+      Input:  
+              INDEPENDENT element = 14 (Silicon)
+              REACTANT element > 1 [Am] element < 20 PRODUCT element - 6
+      Output: 
+              14 (Silicon)
               8 (Oxygen)
               
 
