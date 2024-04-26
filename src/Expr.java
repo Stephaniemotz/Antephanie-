@@ -1,22 +1,28 @@
 package src;
 
-//import java.util.List;
-//import src.Expr.Assign;
-//import src.Expr.Variable;
-//import src.Expr.Visitor;
+import java.util.List;
 
-
+/**
+ * Represents an expression in the abstract syntax tree (AST). The Expr class
+ * hierarchy is designed to represent various types of expressions encountered
+ * in the language, utilizing the Visitor pattern for expression evaluation.
+ */
 abstract class Expr {
-	/**
-	 * an abstract base class for different types of expression objects in an
-	 * expression tree.
-	 * 
-	 **/
 
-	// A generic interface within Expr that defines
-	// a visitor with methods for visiting
-	// different types of expressions.
+	/**
+	 * Defines a generic visitor interface with methods to visit different types of
+	 * expressions. This allows for the implementation of operations (like
+	 * evaluation) to be defined externally to the class hierarchy.
+	 */
 	interface Visitor<R> {
+		R visitIfElifElseExpr(IfElifElse expr);		/* Lab 7 */
+		
+		R visitLogicalExpr(Logical expr); 
+		
+		R visitLogicalNotExpr(LogicalNot logicalNot);
+
+		R visitAssignExpr(Assign expr);
+
 		R visitBinaryExpr(Binary expr);
 
 		R visitGroupingExpr(Grouping expr);
@@ -24,67 +30,125 @@ abstract class Expr {
 		R visitLiteralExpr(Literal expr);
 
 		R visitUnaryExpr(Unary expr);
-		
-		R visitLogicalExpr(Logical expr); // New method for visiting logical expressions
-		
-		R visitAssignExpr(Assign expr);
-		
+
 		R visitVariableExpr(Variable expr);
+
+		
 	}
 
-	// An abstract method must be implemented by subclasses.
-	// It's part of the Visitor pattern, where it accepts
-	// a visitor that will perform operations on the expression object.
-	abstract <R> R accept(Visitor<R> visitor);
-
-	/* * * * * * * * * * * * * 
-	 * Expression Types: 
-	 * - Literal 
-	 * - Binary 
-	 * - Unary 
-	 * - Grouping
+	/**
+	 * Accepts a visitor that will perform some operations based on the type of the
+	 * expression.
 	 * 
-	 * The subclasses of Expr represent different types of expressions. 
-	 * Each subclass implements the accept method, calling 
-	 * the appropriate visit method on the visitor, 
-	 * passing this as an argument. 
-	 * * * * * * * * * * *
+	 * @param visitor - The visitor that will process this expression.
+	 * @return The result of the operation performed by the visitor, of generic type
+	 *         R.
 	 */
+	abstract <R> R accept(Visitor<R> visitor);
 	
-	 public static class Assign extends Expr {
-        public final Token name;
-        public final TokenType operator;
-        public final Expr value;
+	/**
+	 * 
+	 * */
+	static class CondExprPair {
+        final Expr condition;
+        final Expr expression;
 
-        public Assign(Token name, TokenType operator, Expr value) {
-            this.name = name;
-            this.operator = operator;
-            this.value = value;
+        public CondExprPair(Expr condition, Expr expression) {
+            this.condition = condition;
+            this.expression = expression;
         }
-
-		@Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitAssignExpr(this);
-        }
+        
+        
     }
 	
+	static class IfElifElse extends Expr {
+		
+		IfElifElse(List<CondExprPair> cases, Expr elseCase) {
+		      this.cases = cases;
+		      this.elseCase = elseCase;
+		    }
+		
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitIfElifElseExpr(this);
+		}
+
+		final List<CondExprPair> cases;
+		final Expr elseCase;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * */
+	static class Logical extends Expr {
+		Logical(Expr left, Token operator, Expr right) {
+			this.left = left;
+			this.operator = operator;
+			this.right = right;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitLogicalExpr(this);
+		}
+
+		final Expr left;
+		final Token operator;
+		final Expr right;
+	}
+	
+	static class LogicalNot extends Expr {
+		LogicalNot(Token operator, Expr expr) {
+			this.operator = operator;
+			this.expr = expr;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitLogicalNotExpr(this);
+		}
+
+		final Token operator;
+		final Expr expr;
+	}
+
+	static class Assign extends Expr {
+		Assign(Token name, Expr value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitAssignExpr(this);
+		}
+
+		final Token name;
+		final Expr value;
+	}
+
 	static class Variable extends Expr {
-	    Variable(Token name) {
-	      this.name = name;
-	    }
+		Variable(Token name) {
+			this.name = name;
+		}
 
-	    @Override
-	    <R> R accept(Visitor<R> visitor) {
-	      return visitor.visitVariableExpr(this);
-	    }
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitVariableExpr(this);
+		}
 
-	    final Token name;
-	  }
-	
-	
+		final Token name;
+	}
 
-	/* Literal subclass */
+	/**
+	 * Represents a literal expression in the AST.
+	 */
 	static class Literal extends Expr {
+		final Object value;
+
 		Literal(Object value) {
 			this.value = value;
 		}
@@ -93,13 +157,16 @@ abstract class Expr {
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitLiteralExpr(this);
 		}
-
-		final Object value;
 	}
 
-	
-	/* Binary Operation subclass */
+	/**
+	 * Represents a binary operation between two expressions.
+	 */
 	static class Binary extends Expr {
+		final Expr left;
+		final Token operator;
+		final Expr right;
+
 		Binary(Expr left, Token operator, Expr right) {
 			this.left = left;
 			this.operator = operator;
@@ -110,37 +177,32 @@ abstract class Expr {
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitBinaryExpr(this);
 		}
+	}
 
-		final Expr left;
+	/**
+	 * Represents a unary operation on a single expression.
+	 */
+	static class Unary extends Expr {
 		final Token operator;
 		final Expr right;
-	}
-	
-	
 
-	
-	/* Unary Operation subclass */
-	static class Unary extends Expr {
-		// TODO: Task 2 - complete the Unary class, which represents 
-		// a unary operation (e.g., negation) on a single expression.
-		
+		Unary(Token operator, Expr right) {
+			this.operator = operator;
+			this.right = right;
+		}
 
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitUnaryExpr(this);
 		}
-
-		final Token operator;
-		final Expr right;
-		
-		public Unary (Token operator, Expr right) {     //I DON'T KNOW IF THIS IS CORRECT
-			this.operator = operator;
-			this.right = right;
-		}
 	}
 
-	/* Grouping subclass */
+	/**
+	 * Represents an expression enclosed in parentheses.
+	 */
 	static class Grouping extends Expr {
+		final Expr expression;
+
 		Grouping(Expr expression) {
 			this.expression = expression;
 		}
@@ -149,27 +211,5 @@ abstract class Expr {
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitGroupingExpr(this);
 		}
-
-		final Expr expression;
-	}
-	
-	// Logical subclass for OR, AND, NOT
-	static class Logical extends Expr {
-        final Expr left;
-        final Token operator;
-        final Expr right;
-
-        Logical(Expr left, Token operator, Expr right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLogicalExpr(this);
-            
-      
-        }
 	}
 }

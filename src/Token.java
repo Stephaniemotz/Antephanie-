@@ -4,8 +4,8 @@ public class Token {
 
 	final TokenType type; 	// token type
 	final Object value; 	// token value
-	final String lexeme;
-	final int line;
+	final String lexeme; 	// token value as a String
+	final int line;			// token location
 
 	/**
 	 * Token Constructor
@@ -40,3 +40,4 @@ public class Token {
 	}
 
 }
+

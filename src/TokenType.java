@@ -1,64 +1,52 @@
 package src;
 
+/*------------------ Note: This file is completed ----------------*/
 
 /**
  * Token Types
  */
 enum TokenType {
+	// Single-character tokens.
+	LEFT_PAREN, RIGHT_PAREN, // (  ,  )
+	LBRACKET  , RBRACKET,    // {  ,  }
+	LBRACE    , RBRACE,      // ~  ,  *
+	COMMA     , PERIOD,      // ,  ,  . 
+	SEMIC     , COLON,       // ;  ,  :
 	
-	//Delimeters 
-	LEFT_PAREN, RIGHT_PAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, COMMA, PERIOD  , SEMI, COLON,
-	//  (      ,      )    ,    {    ,    }    ,    ~  ,   *   ,  ',' ,    .    ,  ;  ,  :
-	  
 	//Arithmetic Operations
-	MINUS, PLUS, DIV, MULT, MOD, INCREMENT, DECREMENT, 
-	// - , [P] , [Dy], [Ts], [Mo], [In],      [Md],
+	MINUS, PLUS, DIV, MULT,    // - , [P], [Dy], [Ts]
+	MOD, INCREMENT, DECREMENT, // [Mo] , [In], [Md] 
 	
 	//Assignment Operators
-	EQUAL, TIMESEQUAL, DIVEQUAL, PLUSEQUAL, MINUSEQUAL, 
-	//=,      [Ts=],    [Dy=],     [P=],      [-=],
-	
-	//Comparison Operations
-	EQUALTO, NOTEQUAL, GREATERTHAN, LESSTHAN, GREATEQ, LESSEQ,
-	// ==,  [No=], >, <, >=, <=,
+	DIVEQUAL, PLUSEQUAL, MINUSEQUAL, TIMESEQUAL,  //[Ts=], [Dy=], [P=], [-=]
+
+	// Comparison Operations
+	BANG_EQUAL,             //[No=]
+	EQUAL, EQUAL_EQUAL,     // =, ==
+	GREATER, GREATER_EQUAL, // >, >=
+	LESS, LESS_EQUAL,       // <, <=
 	
 	//Logical Operations
-	OR, AND, NOT, 
-	//[O],[Am], [No],
+	OR, AND, NOT,           //[O], [Am], [No]   
 	
-	//Decision Making (Else if??)
-	IF, ELSE, SWITCH, CASE, BREAK,
-	//Reactant, Product, Experiment, Reaction, Spill
+	//Decision Making 
+	IF, THEN, ELIF, ELSE,   //Reactant, Product, Elif, Else
+	SWITCH, CASE, BREAK,    //Experiment, Reaction, Spill
 	
-	//Looping 
-	FOR, WHILE, DO,
-		
+	//Looping
+	FOR, WHILE, DO,        // For, While, Do 
+	
 	// Literals.
 	NUMBER, 
 	
-	//Keywords
-	VAR, ID,
-	//Independent
+	// Keywords.
+	VAR, IDENTIFIER,       //Indepdendent, Identifier
 	
-	//Block Comments
-	SCOMMENT, ECOMMENT,
-	// #PERIODIC ,  PERIODIC# 
+	//Comments 
+	StartComment, EndComment,  //#PERIODIC, PERIODIC#
+	SINGLECOMMENT,             //%
 	
-	//Single Line Comment 
-	SINGLECOMMENT,
-	//%
-	
+
 	// EOF
 	EOF
 }
-
-//TODO!!
-//EQUALTO ==
-//>=
-//<=
-
-
-//Period are now just . (it broke everything)
-//Block Comments are now #periodic and periodic#
-//Single line comments are %
-// Independent (variable) *the variable being changed or controlled by a scientist*

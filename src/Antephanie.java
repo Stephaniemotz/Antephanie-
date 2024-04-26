@@ -5,22 +5,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-/*------------------ Note: This file is completed ----------------*/
 public class Antephanie {
+
+	// interpreter
+	private static final Interpreter interpreter = new Interpreter();
 
 	// had-error
 	static boolean hadError = false;
 
-	
-	/**
-	 * RUN Jay Script using Prompt
-	 */
+	static boolean hadRuntimeError = false;
+
 	public static void main(String[] args) throws IOException {
 		InputStreamReader input = new InputStreamReader(System.in);
 		BufferedReader reader = new BufferedReader(input);
 
 		for (;;) {
-			System.out.print("Antephanie Parser --> ");
+			System.out.print("Antephanie > ");
 			String line = reader.readLine();
 			if (line == null)
 				break;
@@ -30,22 +30,27 @@ public class Antephanie {
 	}
 
 	/**
-	 * use the Lexer and Parser, then
-	 * print the generated AST
+	 * use the Lexer and Parser, then print the generated AST
 	 */
 	private static void run(String source) {
 		Scanner scanner = new Scanner(source);
 		List<Token> tokens = scanner.scanTokens();
-		
+
 		Parser parser = new Parser(tokens);
 		Expr expression = parser.parse();
 
 		// Stop if there was a syntax error.
-	    if (hadError) return;
+		if (hadError) {
+			hadError = false;
+			return;
+		}
+			
 
-	    System.out.println(new AstPrinter().print(expression));
-		
-		
+		/** print the AST */
+		// System.out.println(new AstPrinter().print(expression));
+
+		/** interpreter */
+		interpreter.interpret(expression);
 	}
 
 	/**
@@ -55,22 +60,24 @@ public class Antephanie {
 		report(line, "", message);
 	}
 
-	
-	
-	//> Parsing Expressions token-error
-	static void error(Token token, String message) {
-	    if (token.type == TokenType.EOF) {
-	        report(token.line, " at end", message);
-	    } else {
-	        report(token.line, " at '" + token.lexeme + "'", message);
-	    }
+	private static void report(int line, String where, String message) {
+		System.err.println("[line " + line + "] Error" + where + ": " + message);
+		hadError = true;
 	}
 
-	private static void report(int line, String where, String message) {
-	    System.err.println(
-	            "[line " + line + "] Error" + where + ": " + message);
-	    hadError = true;
+	/** Parsing Expressions token-error */
+	static void error(Token token, String message) {
+		if (token.type == TokenType.EOF) {
+			report(token.line, " at end", message);
+		} else {
+			report(token.line, " at '" + token.lexeme + "'", message);
+		}
 	}
-	//< Parsing Expressions token-error
+
+	/** Evaluating Expressions runtime-error-method */
+	static void runtimeError(RuntimeError error) {
+		System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
+		hadRuntimeError = true;
+	}
 
 }

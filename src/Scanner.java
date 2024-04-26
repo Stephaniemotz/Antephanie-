@@ -8,15 +8,31 @@ import java.util.Map;
 import static src.TokenType.*; // [static-import]
 
 public class Scanner {
-
+	
+	/* keyword-map */
 	private static final Map<String, TokenType> keywords;
 	
 	static {
 		keywords = new HashMap<>();
-		keywords.put("Independent", VAR);
+		keywords.put("INDEPENDENT",    VAR);
+		keywords.put("Am",             AND);
+		keywords.put("O",              OR);
+		keywords.put("No",             NOT);
+		keywords.put("REACTANT",       IF);
+		keywords.put("PRODUCT",        THEN);
+		keywords.put("ELIF",           ELIF);
+		keywords.put("ELSE",           ELSE);
+		keywords.put("EXPERIMENT",     SWITCH);
+		keywords.put("REACTION",       CASE);
+		keywords.put("SPILL",          BREAK);
+		keywords.put("FOR",            FOR);
+		keywords.put("WHILE",          WHILE);
+		keywords.put("DO",             DO);
+
+
+		
 	}
 
-	
 	private final String source; //
 	private final List<Token> tokens = new ArrayList<>();
 
@@ -71,7 +87,7 @@ public class Scanner {
 			addToken(PERIOD);
 			break;
 		case ';':
-			addToken(SEMI);
+			addToken(SEMIC);
 			break;
 		case ':':
 			addToken(COLON);
@@ -83,10 +99,10 @@ public class Scanner {
 			addToken(EQUAL);
 			break;
 		case '>':
-			addToken(GREATERTHAN);
+			addToken(GREATER);
 			break;
 		case '<':
-			addToken(LESSTHAN);
+			addToken(LESS);
 			break;
 			
 		//Handle Square Brackets
@@ -214,13 +230,13 @@ public class Scanner {
 
 			//Comparison Operations
 			} else if (content.equals("==")) {
-				addToken(EQUALTO);
+				addToken(EQUAL_EQUAL);
 			} else if (content.equals("No=")) {
-				addToken(NOTEQUAL);
+				addToken(BANG_EQUAL);
 			} else if (content.equals(">=")) {
-				addToken(GREATEQ);
+				addToken(GREATER_EQUAL);
 			} else if (content.equals("<=")) {
-				addToken(LESSEQ);
+				addToken(LESS_EQUAL);
 
 
 				
@@ -241,27 +257,27 @@ public class Scanner {
 		
 			next();
 		}
-		
-	/* Scan a identifier/keyword Token */
+	
+	
+	/**
+	 * Scan a identifier Token
+	 */
 	private void identifier() {
 	    while ( isAlphaNumeric(currentChar()) ) {
 	    	next();
 	    }
-	    
+	
+	    //> keyword-type
 	    String text = source.substring(start, current);
 	    TokenType type = keywords.get(text);
-	    
-	    // TODO 2.2: finish this method to handle 
-	    // the IDENTIFIER and keyword token (VAR)
-	    
-	    if (type != null) { 
-	    	addToken(TokenType.VAR);
-	    } else {
-	    	addToken(TokenType.ID);  
-	    
+	    if (type == null) {
+	    	type = IDENTIFIER;
 	    }
-	    
+	    addToken(type);
+	    //< keyword-type
 	  }
+	
+	
 
 	/**
 	 * Scan a Number Token
@@ -307,6 +323,16 @@ public class Scanner {
 		return source.charAt(current + 1);
 	}
 	
+	/** private boolean match(char expected) {
+	    if (isAtEnd()) return false;
+	    if (source.charAt(current) != expected) 
+	    	return false;
+
+	    current++;
+	    return true;
+	}**/
+
+	
 	
 
 	/**
@@ -317,6 +343,8 @@ public class Scanner {
 		return c >= '0' && c <= '9';
 	}
 	
+	
+	/* Lab 5 */
 	/**
 	 * Check if a Character is an alphabet
 	 **/
@@ -326,6 +354,8 @@ public class Scanner {
 	            c == '_';
 	}
 	
+	
+	/* Lab 5 */
 	/**
 	 * Check if a Character is a alphabet or digit
 	 **/
