@@ -10,10 +10,12 @@ The tools we are using is the periodic table, Visual Studio Code (preferred IDE)
 To use Antephanie, simply input an equation and the lexer will return the equation described in Antephanie language syntax. Examples include:
 
 Lexer Example:
+
       Input:5 [P] 4
       Output: 9
 
 Parser Example: 
+
       Input: experiments (groups) {​
                  reaction 1:​
                    element = "metals";​
@@ -27,6 +29,7 @@ Parser Example:
               }  
 
 Interpreter Example:
+
       Input:  VAR element = 14 (Silicon)
               REACTANT element > 1 [Am] element < 20 PRODUCT element-6
       Output: 14 (Silicon)
