@@ -2,13 +2,11 @@ Hello chemists, and welcome to the Interpreter Branch for Antephanie₂!
 
 This branch contains all resources and code for the Interpreter portion of Antephanie
 
+Example:
 
-Learn more: 
-
-This is a repository for PA2 in CS441. Antephanie is a programming language used as a lexical analyzer for Java. 
-
-Users will input an equation that will return the equation described in Antephanie language. The language includes the periodic table
-elements that are closely matched with the equation. 
-
-The tools we are using for our programming language are the periodic table, Visual Studio Code, JFlex, and ChatGPT.
-
+      Input:  
+              INDEPENDENT element = 14 (Silicon)
+              REACTANT element > 1 [Am] element < 20 PRODUCT element - 6
+      Output: 
+              14 (Silicon)
+              8 (Oxygen)
