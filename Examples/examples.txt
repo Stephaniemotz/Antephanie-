@@ -1,1 +1,8 @@
-Text File for Examples from Antephanie Process!
+Text File for Examples from Antephanie Interpreter!
+
+Input:  
+              INDEPENDENT element = 14 (Silicon)
+              REACTANT element > 1 [Am] element < 20 PRODUCT element - 6
+      Output: 
+              14 (Silicon)
+              8 (Oxygen)
